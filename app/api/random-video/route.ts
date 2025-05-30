@@ -5,6 +5,7 @@ import { getRandomVideo } from "@/lib/google-photos"
 
 export async function GET(request: NextRequest) {
   try {
+    console.log("i route")
     const session = await getServerSession(authOptions)
 
     if (!session?.accessToken) {
