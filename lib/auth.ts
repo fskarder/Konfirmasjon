@@ -7,15 +7,20 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
-        params: {
-          scope: "openid email profile https://www.googleapis.com/auth/photoslibrary.readonly",
-        },
+        url: "https://accounts.google.com/o/oauth2/v2/auth",
+       params: {
+      scope: "openid email profile https://www.googleapis.com/auth/photospicker.mediaitems.readonly",
+      prompt: "consent", // 🔑 forces user to re-consent even if previously logged in
+      access_type: "offline", // for refresh token if needed
+      response_type: "code",
+    },
       },
     }),
   ],
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
+        console.log("scopes in token: ", account.scope)
         token.accessToken = account.access_token
       }
       return token
