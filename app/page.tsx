@@ -1,12 +1,15 @@
 "use client"
 
-import { useSession, signIn, signOut } from "next-auth/react"
+import { useSession, signIn } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import PanicButton from "@/components/panic-button"
-import { LogOut, User } from "lucide-react"
+import { User, Settings } from "lucide-react"
+import Link from "next/link"
+import { useSelectedVideos } from "@/context/selected-videos-context"
 
 export default function Home() {
   const { data: session, status } = useSession()
+  const { hasVideos } = useSelectedVideos()
 
   if (status === "loading") {
     return (
@@ -41,11 +44,12 @@ export default function Home() {
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-800">Panic Button</h1>
           <div className="flex items-center gap-4">
-            <span className="text-gray-600">Hello, {session.user?.name}</span>
-            <Button onClick={() => signOut()} variant="outline" size="sm">
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign Out
-            </Button>
+            <Link href="/select-videos">
+              <Button variant="outline" size="sm">
+                <Settings className="mr-2 h-4 w-4" />
+                Select Videos
+              </Button>
+            </Link>
           </div>
         </div>
       </header>
@@ -54,7 +58,20 @@ export default function Home() {
       <main className="max-w-6xl mx-auto py-12">
         <div className="text-center mb-8">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">Emergency Video Relief</h2>
-          <p className="text-xl text-gray-600">Press the panic button to get a random video from your Google Photos!</p>
+          <p className="text-xl text-gray-600">
+            Press the panic button to get a random video from your selected videos!
+          </p>
+
+          {!hasVideos && (
+            <div className="mt-4">
+              <Link href="/select-videos">
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Select Videos First
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <PanicButton />

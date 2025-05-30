@@ -3,16 +3,12 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle, Loader2 } from "lucide-react"
-
-interface Video {
-  id: string
-  baseUrl: string
-  filename: string
-  mimeType: string
-}
+import { useSelectedVideos } from "@/context/selected-videos-context"
+import type { SelectedVideo } from "@/types/videos"
 
 export default function PanicButton() {
-  const [currentVideo, setCurrentVideo] = useState<Video | null>(null)
+  const { getRandomVideo, hasVideos } = useSelectedVideos()
+  const [currentVideo, setCurrentVideo] = useState<SelectedVideo | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isPressed, setIsPressed] = useState(false)
@@ -26,14 +22,16 @@ export default function PanicButton() {
     setTimeout(() => setIsPressed(false), 200)
 
     try {
-      const response = await fetch("/api/random-video")
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Failed to fetch video")
+      if (!hasVideos) {
+        throw new Error("No videos selected. Please select videos first.")
       }
 
-      const video = await response.json()
+      const video = getRandomVideo()
+
+      if (!video) {
+        throw new Error("No videos found. Please select videos first.")
+      }
+
       setCurrentVideo(video)
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -48,7 +46,7 @@ export default function PanicButton() {
       <div className="relative">
         <Button
           onClick={fetchRandomVideo}
-          disabled={isLoading}
+          disabled={isLoading || !hasVideos}
           className={`
             relative h-32 w-32 rounded-full text-2xl font-bold
             bg-red-600 hover:bg-red-700 active:bg-red-800
@@ -56,6 +54,7 @@ export default function PanicButton() {
             transition-all duration-200 ease-in-out 
             ${isPressed ? "scale-95 shadow-lg" : "scale-100 shadow-2xl"}
             ${isLoading ? "animate-pulse" : ""}
+            ${!hasVideos ? "opacity-50 cursor-not-allowed" : ""}
           `}
         >
           <div className="flex flex-col items-center gap-2">
@@ -70,7 +69,7 @@ export default function PanicButton() {
         {/* Glow effect */}
         <div
           className={`
-          absolute rounded-full bg-red-500 opacity-20 blur-xl
+          absolute inset-0 rounded-full bg-red-500 opacity-20 blur-xl
           transition-all duration-300
           ${isPressed ? "scale-150" : "scale-100"}
         `}
@@ -85,8 +84,14 @@ export default function PanicButton() {
       )}
 
       {error && (
-        <div className="text-center p-4 bg-red-100 border border-red-300 rounded-lg">
-          <p className="text-red-700 font-semibold">Error: {error}</p>
+        <div className="text-center p-4 bg-red-100 border border-red-300 rounded-lg max-w-md">
+          <p className="text-red-700 font-semibold">{error}</p>
+        </div>
+      )}
+
+      {!hasVideos && !error && (
+        <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg max-w-md">
+          <p className="text-yellow-700">No videos selected. Please go to the Select Videos page to choose videos.</p>
         </div>
       )}
 

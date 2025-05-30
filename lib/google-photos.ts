@@ -1,35 +1,27 @@
-interface GooglePhotosVideo {
+export interface GooglePhotosResponse {
+  mediaItems: GooglePhotosVideo[]
+}
+
+export interface GooglePhotosVideo {
   id: string
-  baseUrl: string
   filename: string
   mimeType: string
+  baseUrl: string
   mediaMetadata: {
+    creationTime: string
     width: string
     height: string
     video?: {
-      fps: number
       status: string
+      fps: number
     }
   }
 }
 
-interface GooglePhotosResponse {
-  mediaItems: GooglePhotosVideo[]
-  nextPageToken?: string
-}
-
 export async function getRandomVideo(accessToken: string): Promise<GooglePhotosVideo | null> {
   try {
-    console.log("get random video start");
-    //list albums:
-    const responseAlbum = await fetch("https://photoslibrary.googleapis.com/v1/albums", {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${accessToken}`,
-  },
-});
-const dataAlbum = await responseAlbum.json();
-console.log(dataAlbum.albums); // Each album will have an 'id' and a 'title'
+    console.log("Getting random video with new scope")
+
     // Search for video files in Google Photos
     const response = await fetch("https://photoslibrary.googleapis.com/v1/mediaItems:search", {
       method: "POST",
@@ -48,12 +40,17 @@ console.log(dataAlbum.albums); // Each album will have an 'id' and a 'title'
     })
 
     if (!response.ok) {
+      console.error(`Google Photos API error: ${response.status}`)
+      const errorText = await response.text()
+      console.error("Error details:", errorText)
       throw new Error(`Google Photos API error: ${response.status}`)
     }
 
     const data: GooglePhotosResponse = await response.json()
+    console.log("API response:", data)
 
     if (!data.mediaItems || data.mediaItems.length === 0) {
+      console.log("No videos found in response")
       return null
     }
 
@@ -64,6 +61,7 @@ console.log(dataAlbum.albums); // Each album will have an 'id' and a 'title'
     // Add video parameters to the base URL for playback
     video.baseUrl = `${video.baseUrl}=dv`
 
+    console.log("Selected video:", video.filename)
     return video
   } catch (error) {
     console.error("Error fetching random video:", error)
