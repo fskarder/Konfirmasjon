@@ -20,6 +20,7 @@ interface GooglePhotosResponse {
 
 export async function getRandomVideo(accessToken: string): Promise<GooglePhotosVideo | null> {
   try {
+    console.log("get random video start");
     //list albums:
     const responseAlbum = await fetch("https://photoslibrary.googleapis.com/v1/albums", {
   method: "GET",
