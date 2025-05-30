@@ -20,6 +20,15 @@ interface GooglePhotosResponse {
 
 export async function getRandomVideo(accessToken: string): Promise<GooglePhotosVideo | null> {
   try {
+    //list albums:
+    const responseAlbum = await fetch("https://photoslibrary.googleapis.com/v1/albums", {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+  },
+});
+const dataAlbum = await responseAlbum.json();
+console.log(dataAlbum.albums); // Each album will have an 'id' and a 'title'
     // Search for video files in Google Photos
     const response = await fetch("https://photoslibrary.googleapis.com/v1/mediaItems:search", {
       method: "POST",
