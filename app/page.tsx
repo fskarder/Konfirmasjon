@@ -42,7 +42,7 @@ export default function Home() {
           <h1 className="text-2xl font-bold text-gray-800">Panic Button</h1>
           <div className="flex items-center gap-4">
             <span className="text-gray-600">Hello, {session.user?.name}</span>
-            <Button onClick={() => signOut()} variant="outline" size="sm" className="realtive z-50">
+            <Button onClick={() => signOut()} variant="outline" size="sm">
               <LogOut className="mr-2 h-4 w-4" />
               Sign Out
             </Button>

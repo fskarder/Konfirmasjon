@@ -50,10 +50,10 @@ export default function PanicButton() {
           onClick={fetchRandomVideo}
           disabled={isLoading}
           className={`
-            relative h-32 w-32 rounded-full text-2xl font-bold
+            realtive z-50 h-32 w-32 rounded-full text-2xl font-bold
             bg-red-600 hover:bg-red-700 active:bg-red-800
             border-4 border-red-800 shadow-2xl
-            transition-all duration-200 ease-in-out
+            transition-all duration-200 ease-in-out 
             ${isPressed ? "scale-95 shadow-lg" : "scale-100 shadow-2xl"}
             ${isLoading ? "animate-pulse" : ""}
           `}
