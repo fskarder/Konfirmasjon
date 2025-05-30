@@ -50,7 +50,7 @@ export default function PanicButton() {
           onClick={fetchRandomVideo}
           disabled={isLoading}
           className={`
-            realtive z-50 h-32 w-32 rounded-full text-2xl font-bold
+            relative h-32 w-32 rounded-full text-2xl font-bold
             bg-red-600 hover:bg-red-700 active:bg-red-800
             border-4 border-red-800 shadow-2xl
             transition-all duration-200 ease-in-out 
@@ -70,7 +70,7 @@ export default function PanicButton() {
         {/* Glow effect */}
         <div
           className={`
-          absolute inset-0 rounded-full bg-red-500 opacity-20 blur-xl
+          absolute rounded-full bg-red-500 opacity-20 blur-xl
           transition-all duration-300
           ${isPressed ? "scale-150" : "scale-100"}
         `}
